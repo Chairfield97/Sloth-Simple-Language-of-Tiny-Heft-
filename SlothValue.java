@@ -86,8 +86,8 @@ public class SlothValue {
             case BOOLEAN -> {
                 return (boolean) this.value;
             }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
         }
-        return false;
     }
 
     public SlothType getType() {

@@ -15,25 +15,27 @@ public class Main {
 
         boolean done = false;
 
-        while (!done) {
-            String line = input.nextLine();
-            System.out.println(line);
-            if (line.isEmpty()) {
-                done = true;
-            } else {
-                // lex this string, and pass it to the parser
-                SlothLexer lexer = new SlothLexer(CharStreams.fromString(line));
-                CommonTokenStream tokens = new CommonTokenStream(lexer);
-                SlothParser parser = new SlothParser(tokens);
+        StringBuilder line = new StringBuilder();
+        while(input.hasNextLine()) {
+            line.append(input.nextLine());
+            // System.out.println(line);
+        }
+        if (line.isEmpty()) {
+            done = true;
+        } else {
+            // lex this string, and pass it to the parser
+            SlothLexer lexer = new SlothLexer(CharStreams.fromString(line.toString()));
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            SlothParser parser = new SlothParser(tokens);
 
-                // do the parsing
-                ParseTree tree = parser.expression();
+            // do the parsing
+            ParseTree tree = parser.expression();
 
-                // visit the tree to execute it
-                SlothVisitor visitor = new SlothVisitor();
-                SlothValue result = visitor.visit(tree);
-                // System.out.println(result);
-            }
+            // visit the tree to execute it
+            SlothVisitor visitor = new SlothVisitor();
+            SlothValue result = visitor.visit(tree);
+            // System.out.println(result);
+
         }
     }
 }
