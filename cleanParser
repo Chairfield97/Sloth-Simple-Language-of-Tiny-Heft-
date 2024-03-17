@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -f *.class *.interp *.tokens SlothLexer.java SlothParser.java
+
+
