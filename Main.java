@@ -21,6 +21,5 @@ public class Main {
         } catch (IOException e) {
             System.out.print(Arrays.toString(e.getStackTrace()));
         }
-
     }
 }
