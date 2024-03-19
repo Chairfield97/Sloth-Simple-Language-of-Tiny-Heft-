@@ -1,4 +1,5 @@
 public class SlothValue {
+
     private Object value;
     private SlothType type;
 
@@ -64,10 +65,14 @@ public class SlothValue {
                 try {
                     throw new Exception("Invalid type conversion");
                 } catch (Exception e) {
+                    //System.out.println(type);
                     throw new RuntimeException(e);
                 }
             }
-            case INT, DOUBLE -> {
+            case INT -> {
+                return ((Number)(this.value)).doubleValue();
+            }
+            case DOUBLE -> {
                 return (double) this.value;
             }
         }

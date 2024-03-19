@@ -5,37 +5,22 @@ import org.antlr.v4.runtime.tree.*;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner input;
+
         try {
-            FileInputStream fis = new FileInputStream(args[0]);
-            input = new Scanner(fis);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        boolean done = false;
-
-        StringBuilder line = new StringBuilder();
-        while(input.hasNextLine()) {
-            line.append(input.nextLine());
-            // System.out.println(line);
-        }
-        if (line.isEmpty()) {
-            done = true;
-        } else {
-            // lex this string, and pass it to the parser
-            SlothLexer lexer = new SlothLexer(CharStreams.fromString(line.toString()));
+            SlothLexer lexer = new SlothLexer(CharStreams.fromFileName(args[0]));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             SlothParser parser = new SlothParser(tokens);
 
             // do the parsing
-            ParseTree tree = parser.expression();
+            ParseTree tree = parser.program();
 
             // visit the tree to execute it
             SlothVisitor visitor = new SlothVisitor();
-            SlothValue result = visitor.visit(tree);
-            // System.out.println(result);
+            visitor.visit(tree);
 
+        } catch (IOException e) {
+            System.out.print(Arrays.toString(e.getStackTrace()));
         }
+
     }
 }

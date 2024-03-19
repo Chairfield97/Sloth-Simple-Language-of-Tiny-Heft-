@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.*;
 public class SlothVisitor extends SlothParserBaseVisitor<SlothValue> {
 
     Scanner scnr = new Scanner(System.in);
-    HashMap<String, SlothValue> symbols;
+    HashMap<String, SlothValue> symbols = new HashMap<>();
 
     @Override
     public SlothValue visitProgram(SlothParser.ProgramContext ctx) {
@@ -57,14 +57,22 @@ public class SlothVisitor extends SlothParserBaseVisitor<SlothValue> {
     @Override
     public SlothValue visitPrint(SlothParser.PrintContext ctx) {
         SlothValue expr = visit(ctx.expression());
-        System.out.print(expr);
+        if (expr.getType() == SlothType.STRING) {
+            System.out.print(expr.toString().replace("\"",""));
+        } else {
+            System.out.print(expr);
+        }
         return null;
     }
 
     @Override
     public SlothValue visitPrintln(SlothParser.PrintlnContext ctx) {
         SlothValue expr = visit(ctx.expression());
-        System.out.println(expr);
+        if (expr.getType() == SlothType.STRING) {
+            System.out.println(expr.toString().replace("\"",""));
+        } else {
+            System.out.println(expr);
+        }
         return null;
     }
 
@@ -107,6 +115,16 @@ public class SlothVisitor extends SlothParserBaseVisitor<SlothValue> {
             } else {
                 return new SlothValue(left.toInt() - right.toInt());
             }
+        } else if (left.getType() == SlothType.STRING || right.getType() == SlothType.STRING) {
+            if (ctx.op.getType() == SlothParser.PLUS) {
+                return new SlothValue(left.toString().concat(right.toString()));
+            } else {
+                try {
+                    throw new Exception("Invalid Operation on String");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         } else {
             if (ctx.op.getType() == SlothParser.PLUS) {
                 return new SlothValue(left.toReal() + right.toReal());
@@ -114,6 +132,7 @@ public class SlothVisitor extends SlothParserBaseVisitor<SlothValue> {
                 return new SlothValue(left.toReal() - right.toReal());
             }
         }
+        return null;
     }
 
     @Override
@@ -140,6 +159,10 @@ public class SlothVisitor extends SlothParserBaseVisitor<SlothValue> {
             } else {
                 return new SlothValue(left.toInt() != right.toInt());
             }
+        } else if(left.getType() == SlothType.STRING && right.getType() == SlothType.STRING) {
+            if (ctx.op.getType() == SlothParser.EQUAL) {
+                return new SlothValue(left.toString().replace("\"", "").equals(right.toString().replace("\"", "")));
+            }
         } else {
             if (ctx.op.getType() == SlothParser.LTHAN) {
                 return new SlothValue(left.toReal() < right.toReal());
@@ -155,12 +178,8 @@ public class SlothVisitor extends SlothParserBaseVisitor<SlothValue> {
                 return new SlothValue(left.toReal() != right.toReal());
             }
         }
+        return null;
     }
-
-    // @Override
-    // public SlothValue visitJustterm(SlothParser.JusttermContext ctx) {
-        // return (visit(ctx.term()));
-    // }
 
     @Override
     public SlothValue visitOr(SlothParser.OrContext ctx) {
