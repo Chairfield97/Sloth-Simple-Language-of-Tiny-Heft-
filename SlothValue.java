@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class SlothValue {
 
     private Object value;
@@ -24,6 +26,11 @@ public class SlothValue {
 
     }
 
+    SlothValue(ArrayList value) {
+        this.value = value;
+        this.type = SlothType.ARRAY;
+    }
+
     @Override
     public String toString() {
         switch (type) {
@@ -38,6 +45,9 @@ public class SlothValue {
             }
             case BOOLEAN -> {
                 return ((Boolean) this.value).toString();
+            }
+            case ARRAY -> {
+                return this.value.toString();
             }
         }
         return null;
@@ -90,6 +100,32 @@ public class SlothValue {
             }
             case BOOLEAN -> {
                 return (boolean) this.value;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
+    }
+    @SuppressWarnings("unchecked")
+    public ArrayList<SlothValue> toArray() {
+        ArrayList<SlothValue> result = new ArrayList<>();
+        switch (type) {
+            case STRING -> {
+                result.add(new SlothValue(this.value.toString()));
+                return result;
+            }
+            case INT -> {
+                result.add(new SlothValue((int)this.value));
+                return result;
+            }
+            case DOUBLE -> {
+                result.add(new SlothValue((double)this.value));
+                return result;
+            }
+            case BOOLEAN -> {
+                result.add(new SlothValue((boolean)this.value));
+                return result;
+            }
+            case ARRAY -> {
+                return (ArrayList<SlothValue>)this.value;
             }
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
